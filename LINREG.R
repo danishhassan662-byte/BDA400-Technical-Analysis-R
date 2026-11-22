@@ -1,24 +1,35 @@
-linreg <- function(data, period) {
+linreg <- function(regressionSource, regressionLength, regressionOffset) {
   
-  result <- rep(NA_real_, length(data))
+  n <- length(regressionSource)
   
-  for (i in period:length(data)) {
-    
-    window <- data[(i - period + 1):i]
-    
-    x <- 1:period
-    
-    model <- lm(window ~ x)
-    
-    result[i] <- predict(
-      model,
-      newdata = data.frame(x = period)
-    )
+  if (regressionLength > n) {
+    stop("Regression length cannot exceed data length")
   }
   
-  return(result)
+  if (regressionOffset >= regressionLength) {
+    stop("Regression offset must be smaller than regression length")
+  }
+  
+  start_index <- max(1, n - regressionLength + regressionOffset)
+  end_index <- min(n, n - regressionOffset - 1)
+  
+  source_values <- regressionSource[start_index:end_index]
+  index_values <- seq_along(source_values)
+  
+  mean_x <- mean(index_values)
+  mean_y <- mean(source_values)
+  
+  slope <- sum((index_values - mean_x) *
+                 (source_values - mean_y)) /
+    sum((index_values - mean_x)^2)
+  
+  intercept <- mean_y - slope * mean_x
+  
+  predicted_values <- intercept + slope * index_values
+  
+  return(list(
+    slope = slope,
+    intercept = intercept,
+    predicted_values = predicted_values
+  ))
 }
-
-prices <- c(10, 20, 30, 40, 50, 60)
-
-linreg(prices, 3)
