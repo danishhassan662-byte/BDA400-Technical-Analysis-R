@@ -14,7 +14,3 @@ crossover <- function(arr1, arr2) {
   
   return(result)
 }
-arr1 <- c(2, 3, 5, 7, 9)
-arr2 <- c(4, 4, 4, 4, 4)
-
-crossover(arr1, arr2)
