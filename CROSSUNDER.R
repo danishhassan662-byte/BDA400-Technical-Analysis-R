@@ -14,7 +14,3 @@ crossunder <- function(arr1, arr2) {
   
   return(result)
 }
-arr1 <- c(8, 7, 5, 3, 1)
-arr2 <- c(4, 4, 4, 4, 4)
-
-crossunder(arr1, arr2)
