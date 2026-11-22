@@ -1,24 +1,22 @@
 ema <- function(data, period) {
   
-  result <- rep(NA_real_, length(data))
-  
-  valid <- which(!is.na(data))
-  
-  if (length(valid) < period) {
-    return(result)
+  if (period <= 0) {
+    stop("Period must be greater than zero")
   }
   
-  start <- valid[period]
+  if (length(data) == 0) {
+    stop("Data cannot be empty")
+  }
   
-  result[start] <- mean(data[valid[1:period]])
+  result <- rep(NA_real_, length(data))
   
   multiplier <- 2 / (period + 1)
   
-  for (i in (start + 1):length(data)) {
-    if (!is.na(data[i])) {
-      result[i] <- data[i] * multiplier +
-        result[i - 1] * (1 - multiplier)
-    }
+  result[1] <- data[1]
+  
+  for (i in 2:length(data)) {
+    result[i] <- (data[i] * multiplier) +
+      (result[i - 1] * (1 - multiplier))
   }
   
   return(result)
