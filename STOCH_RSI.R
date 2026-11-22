@@ -1,46 +1,30 @@
-
 source("RSI.R")
+source("SMA.R")
 
 stoch_rsi <- function(data, period, k_period, d_period) {
   
   rsi_values <- rsi(data, period)
   
-  normalized <- rep(NA_real_, length(data))
+  valid_rsi <- rsi_values[!is.na(rsi_values)]
   
-  for (i in seq_len(length(data))) {
-    if (i >= period + k_period) {
-      
-      window <- rsi_values[(i - k_period + 1):i]
-      
-      lowest <- min(window, na.rm = TRUE)
-      highest <- max(window, na.rm = TRUE)
-      
-      if (highest != lowest) {
-        normalized[i] <- (rsi_values[i] - lowest) /
-          (highest - lowest)
-      } else {
-        normalized[i] <- 0
-      }
-    }
+  if (length(valid_rsi) == 0) {
+    stop("Not enough data to calculate StochRSI")
   }
   
-  K <- rep(NA_real_, length(data))
-  D <- rep(NA_real_, length(data))
+  min_rsi <- min(valid_rsi)
+  max_rsi <- max(valid_rsi)
   
-  for (i in seq_len(length(data))) {
-    if (i >= period + 2 * k_period - 1) {
-      K[i] <- mean(normalized[(i - k_period + 1):i])
-    }
-    
-    if (i >= period + 2 * k_period + d_period - 2) {
-      D[i] <- mean(K[(i - d_period + 1):i])
-    }
+  if (max_rsi == min_rsi) {
+    k_values <- rep(NA_real_, length(rsi_values))
+  } else {
+    k_values <- (rsi_values - min_rsi) / (max_rsi - min_rsi)
   }
   
-  return(list(K = K * 100, D = D * 100))
+  k_line <- sma(k_values, k_period)
+  d_line <- sma(k_line, d_period)
+  
+  return(list(
+    K = k_line,
+    D = d_line
+  ))
 }
-
-prices <- c(10, 12, 11, 14, 13, 15, 16, 14, 17, 18,
-            16, 19, 20, 18, 21, 22, 20, 23, 24, 22)
-
-stoch_rsi(prices, 5, 3, 3)
