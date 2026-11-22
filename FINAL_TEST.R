@@ -1,0 +1,11 @@
+source("SMA.R")
+source("EMA.R")
+source("MACD.R")
+source("STDEV.R")
+source("LINREG.R")
+source("RSI.R")
+source("STOCH_RSI.R")
+source("CROSSOVER.R")
+source("CROSSUNDER.R")
+
+print("All nine scripts loaded successfully!")
