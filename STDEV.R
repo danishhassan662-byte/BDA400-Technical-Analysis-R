@@ -1,15 +1,14 @@
-stdev <- function(data, period) {
-  
-  result <- rep(NA_real_, length(data))
-  
-  for (i in period:length(data)) {
-    window <- data[(i - period + 1):i]
-    result[i] <- sd(window)
+stdev <- function(data) {
+
+  if (length(data) == 0) {
+    stop("Data cannot be empty")
   }
-  
-  return(result)
+
+  mean_value <- sum(data) / length(data)
+  diff_values <- data - mean_value
+  squared_diff <- diff_values * diff_values
+  variance <- sum(squared_diff) / length(data)
+  standard_deviation <- sqrt(variance)
+
+  return(standard_deviation)
 }
-
-prices <- c(10, 20, 30, 40, 50, 60)
-
-stdev(prices, 3)
