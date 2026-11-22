@@ -1,5 +1,8 @@
-
 rsi <- function(data, period) {
+  
+  if (period < 1 || period != as.integer(period)) {
+    stop("Period must be a positive integer")
+  }
   
   changes <- diff(data)
   
@@ -17,12 +20,14 @@ rsi <- function(data, period) {
   avg_gain[period + 1] <- mean(gains[1:period])
   avg_loss[period + 1] <- mean(losses[1:period])
   
-  for (i in (period + 2):length(data)) {
-    avg_gain[i] <- ((avg_gain[i - 1] * (period - 1)) +
-                      gains[i - 1]) / period
-    
-    avg_loss[i] <- ((avg_loss[i - 1] * (period - 1)) +
-                      losses[i - 1]) / period
+  if (length(data) >= period + 2) {
+    for (i in (period + 2):length(data)) {
+      avg_gain[i] <- ((avg_gain[i - 1] * (period - 1)) +
+                        gains[i - 1]) / period
+      
+      avg_loss[i] <- ((avg_loss[i - 1] * (period - 1)) +
+                        losses[i - 1]) / period
+    }
   }
   
   for (i in (period + 1):length(data)) {
